@@ -18,7 +18,7 @@
 
     /* カウント表示を大きく */
     #output {
-      font-size: 8rem;
+      font-size: 25rem;
       font-weight: bold;
       color: #333;
       transition: transform 0.3s ease;
@@ -37,21 +37,32 @@
       100% { transform: scale(1); }
     }
 
+    /*
     #status {
       font-size: 1.5rem;
       margin-bottom: 20px;
       color: #555;
     }
+    */
+    #status {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      font-size: 14px;
+      color: #666;
+      text-align: right;
+    }
+
   </style>
 </head>
 <body>
-  <div id="status">接続中...</div>
   <div id="output">0</div>
-
+  <div id="status">接続中...</div>
   <script>
     const status = document.getElementById("status");
     const output = document.getElementById("output");
 
+    const coinSound = new Audio("sound/he.mp3");
     const ws = new WebSocket("ws://localhost:8000");
 
     ws.onopen = () => {
@@ -61,9 +72,14 @@
     ws.onmessage = (event) => {
       // 数字が変わったらアニメーションを追加
       output.textContent = event.data;
+
+      coinSound.currentTime = 0; // 途中ならリセット
+      coinSound.play();
+
       output.classList.remove("bounce");
       void output.offsetWidth; // 再描画でアニメーションをリセット
       output.classList.add("bounce");
+      
     };
 
     ws.onerror = (err) => {
